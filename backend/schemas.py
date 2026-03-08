@@ -5,7 +5,7 @@ class UserCreate(BaseModel):
     username: str
     password: str
 
-Class UserOut(BaseModel):
+class UserOut(BaseModel):
     id: int
     username: str
 
