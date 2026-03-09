@@ -9,6 +9,7 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
 
+    races = relationship("Race", back_populates="owner")
 class Race(Base):
     __tablename__  = "races"
     id = Column(Integer, primary_key=True, index=True)
