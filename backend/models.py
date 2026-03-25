@@ -1,22 +1,25 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, DateTime
+from sqlalchemy.orm import relationship, declarative_base, Mapped, mapped_column, MappedAsDataclass
+from datetime import datetime, timezone
+from sqlalchemy.sql import func
+from backend.database import Base
 
-Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(String(255))
 
-    races = relationship("Race", back_populates="owner")
+    races: Mapped[list["Race"]] = relationship(back_populates="owner")
 class Race(Base):
     __tablename__  = "races"
-    id = Column(Integer, primary_key=True, index=True)
-    wpm = Column(Float)
-    accuracy = Column(Float)
-    mode = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    wpm: Mapped[float] = mapped_column()
+    accuracy: Mapped[float] = mapped_column()
+    mode: Mapped[str] = mapped_column(default="prose")
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="races")
+    owner: Mapped["User"] = relationship(back_populates="races")
